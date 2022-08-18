@@ -4,10 +4,7 @@ import lombok.*;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GeneratorType;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Getter
 @Setter
@@ -17,7 +14,8 @@ import javax.persistence.Id;
 @Entity
 public class Address {
     @Id
-    int addressId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long addressId;
     String flatNo;
     String area;
     int pinCode;

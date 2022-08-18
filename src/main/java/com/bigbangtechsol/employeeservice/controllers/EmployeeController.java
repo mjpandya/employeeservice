@@ -2,28 +2,41 @@ package com.bigbangtechsol.employeeservice.controllers;
 
 import com.bigbangtechsol.employeeservice.entity.Address;
 import com.bigbangtechsol.employeeservice.entity.Employee;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import com.bigbangtechsol.employeeservice.service.EmployeeService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class EmployeeController {
 
+    @Autowired
+    EmployeeService employeeService;
+
     @GetMapping("/employees")
-    public List<Employee> getAllUsers(){
-            ArrayList<Employee> allEmp = new ArrayList<>();
-            Address address = new Address("F-203","Kudasan",382421,"City Pulse Cinema","Gandhinagar","Gujarat");
-            allEmp.add(new Employee(124,"Mihir","Pandya",new Date(2021,12,01),"Mumbai",address,12L));
-            return allEmp;
+    public ResponseEntity<?> getAllUsers(){
+            List<Employee> employeeList = employeeService.findAll();
+            if(employeeList.size() == 0){
+                return new ResponseEntity<>("No Employees Found!!!",HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<>(employeeList,HttpStatus.OK);
     }
     @GetMapping("employees/{empId}")
-    public Employee getEmployee(@PathVariable("empId") int empId){
-        Address address = new Address("F-203","Kudasan",382421,"City Pulse Cinema","Gandhinagar","Gujarat");
-        Employee emp = new Employee(124,"Mihir","Pandya",new Date(2021,12,01),"Mumbai",address,12L);
-        return emp;
+    public ResponseEntity<?> getEmployee(@PathVariable("empId") Long empId){
+        Employee employeeOptional = employeeService.findEmployeeById(empId);
+
+            return new ResponseEntity<>(employeeOptional,HttpStatus.CREATED);
+
+    }
+    @PostMapping("/employees/save")
+    public ResponseEntity<Employee> saveEmployee(@RequestBody Employee employee){
+        Employee employee1 = employeeService.saveEmployee(employee);
+        return new ResponseEntity<>(employee1, HttpStatus.CREATED);
     }
 }

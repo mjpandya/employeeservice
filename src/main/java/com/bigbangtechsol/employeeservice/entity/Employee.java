@@ -1,11 +1,9 @@
 package com.bigbangtechsol.employeeservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.util.Date;
 @Getter
 @Setter
@@ -15,12 +13,15 @@ import java.util.Date;
 @Entity
 public class Employee {
     @Id
-    int empId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long empId;
     String name;
     String lastName;
+    @JsonFormat(pattern="yyyy-MM-dd")
     Date joiningDate;
     String officeLocation;
-    @OneToOne(fetch = FetchType.LAZY,mappedBy = "address")
+    @OneToOne(fetch = FetchType.EAGER,targetEntity = Address.class,cascade=CascadeType.ALL)
+    @JoinColumn(name = "addressId")
     Address address;
     long salary;
 
